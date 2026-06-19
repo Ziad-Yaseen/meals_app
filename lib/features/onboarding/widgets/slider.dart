@@ -1,7 +1,11 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meals_app/core/components/spacing.dart';
 import 'package:meals_app/core/constants/app_colors.dart';
+import 'package:meals_app/core/resources/app_icons.dart';
+import 'package:meals_app/core/routing/app_routes.dart';
+import 'package:meals_app/core/spacing/app_font_size.dart';
 import 'package:meals_app/core/spacing/app_radius.dart';
 import 'package:meals_app/core/spacing/app_spacing.dart';
 import 'package:meals_app/core/styles/app_styles.dart';
@@ -72,19 +76,47 @@ class _CustomSliderState extends State<CustomSlider> {
           ),
         ),
         const Spacer(),
-        Row(
-          children: [
-            InkWell(
-              onTap: () {},
-              child: Text('Skip', style: AppStyles.witeText),
-            ),
-            const Spacer(),
-            InkWell(
-              onTap: () {},
-              child: Text('Next', style: AppStyles.witeText),
-            ),
-          ],
-        ),
+        _currentIndex == 2
+            ? Padding(
+                padding: const EdgeInsets.all(16),
+                child: InkWell(
+                  onTap: () {
+                    GoRouter.of(context).pushReplacementNamed(AppRoutes.home);
+                  },
+                  borderRadius: BorderRadius.circular(100),
+                  child: Container(
+                    padding: const EdgeInsets.all(19),
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColors.white,
+                    ),
+                    child: Icon(
+                      AppIcons.arrow,
+                      color: AppColors.primary,
+                      size: AppFontSize.sp24,
+                    ),
+                  ),
+                ),
+              )
+            : Row(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      GoRouter.of(context).pushReplacementNamed(AppRoutes.home);
+                    },
+                    child: Text('Skip', style: AppStyles.witeText),
+                  ),
+                  const Spacer(),
+                  InkWell(
+                    onTap: () {
+                      _currentIndex++;
+                      controller.animateToPage(_currentIndex);
+                      setState(() {});
+                    },
+                    child: Text('Next', style: AppStyles.witeText),
+                  ),
+                ],
+              ),
       ],
     );
   }
