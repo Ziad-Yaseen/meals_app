@@ -1,18 +1,17 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:meals_app/core/components/spacing.dart';
 import 'package:meals_app/core/constants/app_colors.dart';
 import 'package:meals_app/core/resources/app_icons.dart';
-import 'package:meals_app/core/routing/app_routes.dart';
 import 'package:meals_app/core/spacing/app_font_size.dart';
 import 'package:meals_app/core/spacing/app_radius.dart';
 import 'package:meals_app/core/spacing/app_spacing.dart';
 import 'package:meals_app/core/styles/app_styles.dart';
 
 class CustomSlider extends StatefulWidget {
-  const CustomSlider({super.key, required this.list});
+  const CustomSlider({super.key, required this.list, required this.onSkip});
   final List<Widget> list;
+  final VoidCallback onSkip;
 
   @override
   State<CustomSlider> createState() => _CustomSliderState();
@@ -80,9 +79,7 @@ class _CustomSliderState extends State<CustomSlider> {
             ? Padding(
                 padding: const EdgeInsets.all(16),
                 child: InkWell(
-                  onTap: () {
-                    GoRouter.of(context).pushReplacementNamed(AppRoutes.home);
-                  },
+                  onTap: widget.onSkip,
                   borderRadius: BorderRadius.circular(100),
                   child: Container(
                     padding: const EdgeInsets.all(19),
@@ -99,14 +96,12 @@ class _CustomSliderState extends State<CustomSlider> {
                 ),
               )
             : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   InkWell(
-                    onTap: () {
-                      GoRouter.of(context).pushReplacementNamed(AppRoutes.home);
-                    },
+                    onTap: widget.onSkip,
                     child: Text('Skip', style: AppStyles.witeText),
                   ),
-                  const Spacer(),
                   InkWell(
                     onTap: () {
                       _currentIndex++;

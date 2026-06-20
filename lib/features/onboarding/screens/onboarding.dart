@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meals_app/core/constants/app_colors.dart';
 import 'package:meals_app/core/resources/app_assets.dart';
+import 'package:meals_app/core/routing/app_routes.dart';
+import 'package:meals_app/core/services/onboarding_services.dart';
 import 'package:meals_app/core/spacing/app_spacing.dart';
 import 'package:meals_app/core/spacing/app_radius.dart';
 import 'package:meals_app/features/onboarding/models/title_model.dart';
@@ -33,6 +36,19 @@ class _OnboardingState extends State<Onboarding> {
     ),
   ];
 
+  // @override
+  // void initState() {
+  //   WidgetsBinding.instance.addPostFrameCallback((callback) {
+  //     bool isFirstTime = OnboardingServices.isFIrstTime();
+  //     if (!isFirstTime) {
+  //       GoRouter.of(context).pushReplacementNamed(AppRoutes.home);
+  //       OnboardingServices.setFIrstTime();
+  //     }
+  //   });
+
+  //   super.initState();
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,7 +71,13 @@ class _OnboardingState extends State<Onboarding> {
                 color: AppColors.primary.withValues(alpha: 0.9),
                 borderRadius: BorderRadius.circular(AppRadius.r48),
               ),
-              child: CustomSlider(list: models),
+              child: CustomSlider(
+                list: models,
+                onSkip: () {
+                  GoRouter.of(context).pushReplacementNamed(AppRoutes.home);
+                  OnboardingServices.setFIrstTime();
+                },
+              ),
             ),
           ),
         ],
