@@ -40,6 +40,9 @@ dependencies:
   dots_indicator: ^4.0.1
   carousel_slider: ^5.1.2
   shared_preferences: ^2.5.5
+  sqflite: ^2.4.3
+  path: ^1.9.1
+  cached_network_image: ^3.4.1
 
 dev_dependencies:
   flutter_test:

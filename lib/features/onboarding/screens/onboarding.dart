@@ -74,8 +74,8 @@ class _OnboardingState extends State<Onboarding> {
               child: CustomSlider(
                 list: models,
                 onSkip: () {
-                  GoRouter.of(context).pushReplacementNamed(AppRoutes.home);
                   OnboardingServices.setFIrstTime();
+                  GoRouter.of(context).pushReplacementNamed(AppRoutes.home);
                 },
               ),
             ),

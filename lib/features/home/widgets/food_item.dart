@@ -1,14 +1,15 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meals_app/core/components/spacing.dart';
 import 'package:meals_app/core/constants/app_colors.dart';
 import 'package:meals_app/core/spacing/app_font_size.dart';
 import 'package:meals_app/core/styles/app_styles.dart';
-import 'package:meals_app/features/home/models/recipe_model.dart';
+import 'package:meals_app/features/home/data/models/meal_model.dart';
 
 class FoodItem extends StatelessWidget {
   const FoodItem({super.key, required this.item});
-  final RecipeModel item;
+  final Meal item;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +22,11 @@ class FoodItem extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Image.asset(item.image),
+          CachedNetworkImage(
+            imageUrl: item.url,
+            errorWidget: (context, url, error) =>
+                const Icon(Icons.error, color: Colors.red),
+          ),
           HeightSpace(8.h),
           Text(item.name, style: AppStyles.normal),
           HeightSpace(8.h),
@@ -29,7 +34,7 @@ class FoodItem extends StatelessWidget {
             children: [
               const Icon(Icons.star, color: AppColors.primary),
               Text(
-                '${item.stars}',
+                '${item.rate}',
                 style: AppStyles.normal.copyWith(fontSize: AppFontSize.sp12),
               ),
               const Spacer(),

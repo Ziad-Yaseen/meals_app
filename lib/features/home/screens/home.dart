@@ -2,48 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:meals_app/core/components/spacing.dart';
 import 'package:meals_app/core/constants/app_colors.dart';
-import 'package:meals_app/core/resources/app_assets.dart';
 import 'package:meals_app/core/spacing/app_font_size.dart';
 import 'package:meals_app/core/styles/app_styles.dart';
-import 'package:meals_app/features/home/models/recipe_model.dart';
+import 'package:meals_app/features/home/data/db/db_helper.dart';
+import 'package:meals_app/features/home/data/models/meal_model.dart';
 import 'package:meals_app/features/home/widgets/appbar_image.dart';
 import 'package:meals_app/features/home/widgets/food_item.dart';
+
+DBHelper dbHelper = DBHelper.instance;
 
 class Home extends StatelessWidget {
   const Home({super.key});
 
   @override
   Widget build(BuildContext context) {
-    List<RecipeModel> items = [
-      RecipeModel(
-        name: 'Cheese Burger',
-        stars: 4.9,
-        minimumTime: 20,
-        maximumTime: 30,
-        image: AppAssets.meal1,
-      ),
-      RecipeModel(
-        name: 'Pasta',
-        stars: 4.9,
-        minimumTime: 20,
-        maximumTime: 30,
-        image: AppAssets.meal2,
-      ),
-      RecipeModel(
-        name: 'Breakfast',
-        stars: 4.9,
-        minimumTime: 20,
-        maximumTime: 30,
-        image: AppAssets.meal3,
-      ),
-      RecipeModel(
-        name: 'Fries',
-        stars: 4.9,
-        minimumTime: 20,
-        maximumTime: 30,
-        image: AppAssets.meal4,
-      ),
-    ];
     return Scaffold(
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,16 +30,48 @@ class Home extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                mainAxisSpacing: 15.h,
-                crossAxisSpacing: 15.w,
-                mainAxisExtent: 200.h,
-              ),
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                return FoodItem(item: items[index]);
+            child: FutureBuilder(
+              future: dbHelper.getMeals(),
+              builder: (context, snapshot) {
+                if (snapshot.data!.isEmpty) {
+                  return Center(
+                    child: Text(
+                      'No Meals Found',
+                      style: AppStyles.onBoardingTitle.copyWith(
+                        color: AppColors.black,
+                      ),
+                    ),
+                  );
+                }
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator(color: AppColors.primary),
+                  );
+                } else if (snapshot.hasData) {
+                  return GridView.builder(
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 15.h,
+                      crossAxisSpacing: 15.w,
+                      mainAxisExtent: 200.h,
+                    ),
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      Meal meal = snapshot.data![index];
+                      return FoodItem(item: meal);
+                    },
+                  );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('${snapshot.error}'));
+                }
+                return Center(
+                  child: Text(
+                    'No Data Found',
+                    style: AppStyles.onBoardingTitle.copyWith(
+                      color: AppColors.black,
+                    ),
+                  ),
+                );
               },
             ),
           ),
