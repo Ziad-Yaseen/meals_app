@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:meals_app/core/components/spacing.dart';
 import 'package:meals_app/core/constants/app_colors.dart';
+import 'package:meals_app/core/routing/app_routes.dart';
 import 'package:meals_app/core/spacing/app_font_size.dart';
 import 'package:meals_app/core/styles/app_styles.dart';
 import 'package:meals_app/features/home/data/db/db_helper.dart';
@@ -30,24 +32,26 @@ class Home extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: FutureBuilder(
+            child: FutureBuilder<List<Meal>>(
               future: dbHelper.getMeals(),
               builder: (context, snapshot) {
-                if (snapshot.data!.isEmpty) {
-                  return Center(
-                    child: Text(
-                      'No Meals Found',
-                      style: AppStyles.onBoardingTitle.copyWith(
-                        color: AppColors.black,
-                      ),
-                    ),
-                  );
-                }
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(
                     child: CircularProgressIndicator(color: AppColors.primary),
                   );
+                } else if (snapshot.hasError) {
+                  return Center(child: Text('${snapshot.error}'));
                 } else if (snapshot.hasData) {
+                  if (snapshot.data!.isEmpty) {
+                    return Center(
+                      child: Text(
+                        'No Meals Found',
+                        style: AppStyles.onBoardingTitle.copyWith(
+                          color: AppColors.black,
+                        ),
+                      ),
+                    );
+                  }
                   return GridView.builder(
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
@@ -61,8 +65,6 @@ class Home extends StatelessWidget {
                       return FoodItem(item: meal);
                     },
                   );
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('${snapshot.error}'));
                 }
                 return Center(
                   child: Text(
@@ -78,7 +80,9 @@ class Home extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          GoRouter.of(context).pushNamed(AppRoutes.add);
+        },
         shape: const CircleBorder(
           side: BorderSide(color: AppColors.primary, width: 2),
         ),
